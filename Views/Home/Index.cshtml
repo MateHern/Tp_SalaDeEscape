@@ -1,8 +1,25 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Escape de la Bombonera";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="inicio">
+    <div class="inicio-contenido">
+        <p class="texto-pequeno">UNA NOCHE... UN ESTADIO... NINGUNA SALIDA.......</p>
+
+        <h1>ESCAPE DE LA<br />BOMBONERA</h1>
+
+        <p class="subtitulo">
+            Pasar una noche en La Bombonera parecía una buena idea...
+            hasta que las puertas se cerraron.
+        </p>
+
+        <a asp-controller="Home" asp-action="Identificacion" class="boton">
+            COMENZAR
+        </a>
+
+        <div class="links-inicio">
+            <a asp-controller="Home" asp-action="Tutorial">¿CÓMO SE JUEGA?</a>
+            <a asp-controller="Home" asp-action="Integrantes">INTEGRANTES</a>
+        </div>
+    </div>
 </div>

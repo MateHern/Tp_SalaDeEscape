@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Cómo se juega";
+}
+
+<div class="pagina-simple">
+    <div class="caja">
+        <h1>¿COMO SE JUEGA?</h1>
+
+        <p>
+            Entraste a La Bombonera y las puertas se cerraron.
+            Tenés 30 minutos para encontrar la salida.
+        </p>
+
+        <p>
+            Durante el recorrido vas a encontrar 20 acertijos.
+            Para avanzar tenés que resolverlos correctamente.
+        </p>
+
+        <p>
+            Si necesitás ayuda podés pedir una pista. Pero cuidado:
+            cada respuesta incorrecta aumenta el nivel de peligro.
+        </p>
+
+        <p>
+            Cuando llegues al nivel extremo, Fabra estará muy cerca.
+            Si te equivocás cinco veces, Fabra te alcanza y tenés que empezar nuevamente.
+        </p>
+
+        <div class="tutorial-peligro">
+            <h2>NIVEL DE PELIGRO</h2>
+
+            <p>0 errores → TRANQUILO</p>
+            <p>1 error → SOSPECHOSO</p>
+            <p>2 errores → PELIGROSO</p>
+            <p>3 errores → MUY PELIGROSO</p>
+            <p>4 errores → EXTREMO</p>
+            <p>5 errores → FABRA TE ALCANZÓ</p>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="boton">
+            VOLVER
+        </a>
+    </div>
+</div>
