@@ -26,156 +26,201 @@
             @sala.Descripcion
         </p>
 
-        @if (sala.Numero == 4)
+        @if (sala.Numero == 2)
         {
-            <div class="prueba-imagenes">
+            int situacion = ViewBag.Situacion;
 
-                @if (acertijo.Numero == 1)
+            <div class="prueba-puertas">
+
+                <h2>EL TÚNEL OSCURO</h2>
+
+                <p>
+                    Mirá cuidadosamente la imagen.
+                    Hay una pista escondida que te indica qué puerta elegir.
+                </p>
+
+                @if (situacion == 1)
                 {
-                    <div class="imagen-acertijo">
-
-                        <p class="numero-acertijo">
-                            DESAFÍO 1 DE 4
-                        </p>
-
-                        <img src="~/img/img1.jpg"
-                             alt="Imagen con un número escondido" />
-
-                        <h2>ENCONTRÁ EL NÚMERO AZUL</h2>
-
-                        <p>
-                            Hay un número escondido en la imagen.
-                            Mirá atentamente y encontrá el número azul.
-                        </p>
-
-                    </div>
+                    <img src="~/img/puerta1.jpg" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
-                @if (acertijo.Numero == 2)
+                @if (situacion == 2)
                 {
-                    <div class="imagen-acertijo">
-
-                        <p class="numero-acertijo">
-                            DESAFÍO 2 DE 4
-                        </p>
-
-                        <img src="~/img/img2.jpg"
-                             alt="Imagen con un número escondido" />
-
-                        <h2>ENCONTRÁ EL NÚMERO AMARILLO</h2>
-
-                        <p>
-                            La imagen parece normal, pero alguien escondió
-                            un número. Encontrá el número amarillo.
-                        </p>
-
-                    </div>
+                    <img src="~/img/puerta2.jpg" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
-                @if (acertijo.Numero == 3)
+                @if (situacion == 3)
                 {
-                    <div class="imagen-acertijo">
-
-                        <p class="numero-acertijo">
-                            DESAFÍO 3 DE 4
-                        </p>
-
-                        <img src="~/img/img3.jpg"
-                             alt="Imagen con un número escondido" />
-
-                        <h2>ENCONTRÁ EL NÚMERO ROJO</h2>
-
-                        <p>
-                            Ya encontraste dos números.
-                            Ahora buscá el último número escondido.
-                        </p>
-
-                    </div>
+                    <img src="~/img/puerta3.jpg" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
-                @if (acertijo.Numero == 4)
-                {
-                    <div class="codigo-final">
+                <div class="botones-puerta">
 
-                        <p class="numero-acertijo">
-                            DESAFÍO FINAL
-                        </p>
+                    <form method="post" action="/Home/ElegirPuerta">
+                        <input type="hidden" name="puerta" value="1">
+                        <button type="submit">PUERTA 1</button>
+                    </form>
 
-                        <h2>EL ÚLTIMO MENSAJE DE RIQUELME</h2>
+                    <form method="post" action="/Home/ElegirPuerta">
+                        <input type="hidden" name="puerta" value="2">
+                        <button type="submit">PUERTA 2</button>
+                    </form>
 
-                        <p>
-                            Encontraste los tres números.
-                            Pero todavía no podés salir.
-                        </p>
-
-                        <div class="mensaje-riquelme">
-                            <p>
-                                "El amarillo va primero."
-                            </p>
-
-                            <p>
-                                "El rojo va segundo."
-                            </p>
-
-                            <p>
-                                "El azul va último."
-                            </p>
-                        </div>
-
-                        <h2>
-                            ¿CUÁL ES EL CÓDIGO?
-                        </h2>
-
-                        <p>
-                            Juntá los tres números siguiendo el orden
-                            que dejó Riquelme.
-                        </p>
-
-                    </div>
-                }
+                </div>
 
             </div>
         }
         else
         {
-            <div class="acertijo">
+            @if (sala.Numero == 4)
+            {
+                <div class="prueba-imagenes">
 
-                <p class="numero-acertijo">
-                    ACERTIJO @acertijo.Numero DE 4
-                </p>
+                    @if (acertijo.Numero == 1)
+                    {
+                        <div class="imagen-acertijo">
 
-                <h2>
-                    @acertijo.Pregunta
-                </h2>
+                            <p class="numero-acertijo">
+                                DESAFÍO 1 DE 4
+                            </p>
 
-            </div>
+                            <img src="~/img/numero1.jpg"
+                                 alt="Imagen con un número escondido" />
+
+                            <h2>ENCONTRÁ EL NÚMERO</h2>
+
+                            <p>
+                                Hay un número escondido en la imagen.
+                                Mirá atentamente y encontralo.
+                            </p>
+
+                        </div>
+                    }
+
+                    @if (acertijo.Numero == 2)
+                    {
+                        <div class="imagen-acertijo">
+
+                            <p class="numero-acertijo">
+                                DESAFÍO 2 DE 4
+                            </p>
+
+                            <img src="~/img/numero2.jpg"
+                                 alt="Imagen con un número escondido" />
+
+                            <h2>ENCONTRÁ EL NÚMERO</h2>
+
+                            <p>
+                                Buscá atentamente el número escondido.
+                            </p>
+
+                        </div>
+                    }
+
+                    @if (acertijo.Numero == 3)
+                    {
+                        <div class="imagen-acertijo">
+
+                            <p class="numero-acertijo">
+                                DESAFÍO 3 DE 4
+                            </p>
+
+                            <img src="~/img/numero3.jpg"
+                                 alt="Imagen con un número escondido" />
+
+                            <h2>ENCONTRÁ EL NÚMERO</h2>
+
+                            <p>
+                                Buscá el último número escondido.
+                            </p>
+
+                        </div>
+                    }
+
+                    @if (acertijo.Numero == 4)
+                    {
+                        <div class="codigo-final">
+
+                            <p class="numero-acertijo">
+                                DESAFÍO FINAL
+                            </p>
+
+                            <h2>EL ÚLTIMO MENSAJE DE RIQUELME</h2>
+
+                            <p>
+                                Encontraste los tres números.
+                                Ahora tenés que formar el código.
+                            </p>
+
+                            <div class="mensaje-riquelme">
+
+                                <p>
+                                    "El amarillo va primero."
+                                </p>
+
+                                <p>
+                                    "El rojo va segundo."
+                                </p>
+
+                                <p>
+                                    "El azul va último."
+                                </p>
+
+                            </div>
+
+                            <h2>¿CUÁL ES EL CÓDIGO?</h2>
+
+                            <p>
+                                Juntá los tres números siguiendo el orden
+                                que dejó Riquelme.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="acertijo">
+
+                    <p class="numero-acertijo">
+                        ACERTIJO @acertijo.Numero DE 4
+                    </p>
+
+                    <h2>
+                        @acertijo.Pregunta
+                    </h2>
+
+                </div>
+            }
+
+            <form asp-controller="Home"
+                  asp-action="Responder"
+                  method="post">
+
+                <input type="hidden"
+                       name="idAcertijo"
+                       value="@acertijo.Id" />
+
+                <input type="text"
+                       name="respuesta"
+                       placeholder="Escribí tu respuesta"
+                       autocomplete="off" />
+
+                <button type="submit" class="boton">
+                    COMPROBAR
+                </button>
+
+            </form>
+
+            <a asp-controller="Home"
+               asp-action="Pista"
+               asp-route-idAcertijo="@acertijo.Id"
+               class="boton-pista">
+                👁️ PEDIR PISTA
+            </a>
         }
-
-        <form asp-controller="Home"
-              asp-action="Responder"
-              method="post">
-
-            <input type="hidden"
-                   name="idAcertijo"
-                   value="@acertijo.Id" />
-
-            <input type="text"
-                   name="respuesta"
-                   placeholder="Escribí tu respuesta"
-                   autocomplete="off" />
-
-            <button type="submit" class="boton">
-                COMPROBAR
-            </button>
-
-        </form>
-
-        <a asp-controller="Home"
-           asp-action="Pista"
-           asp-route-idAcertijo="@acertijo.Id"
-           class="boton-pista">
-            👁️ PEDIR PISTA
-        </a>
 
         @if (TempData["Error"] != null)
         {
@@ -206,7 +251,6 @@
 
     </div>
 
-
     <div class="peligro">
 
         <div class="peligro-titulo">
@@ -233,3 +277,4 @@
     </div>
 
 </div>
+

@@ -477,3 +477,37 @@ input[type="text"]:focus {
     color: #e5b800;
     font-weight: bold;
 }
+
+.prueba-puertas {
+    text-align: center;
+}
+
+.imagen-puerta {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    display: block;
+    border: 3px solid #e5c100;
+    border-radius: 10px;
+}
+
+.botones-puerta {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.botones-puerta form {
+    width: 200px;
+}
+
+.botones-puerta button {
+    width: 100%;
+    padding: 15px;
+    background-color: #e5c100;
+    color: #071a42;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}

@@ -5,7 +5,7 @@ using LaMejorSala.Models;
 public class BD
 {
     private static string connectionString =
-        "Server=localhost;Database=EscapeBombonera;Trusted_Connection=True;TrustServerCertificate=True;";
+    "Server=localhost;Database=EscapeBombonera;Trusted_Connection=True;TrustServerCertificate=True;";
 
     public static int CrearJugador(string nombre)
     {
