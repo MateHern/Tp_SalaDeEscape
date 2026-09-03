@@ -2,43 +2,62 @@
     ViewData["Title"] = "Cómo se juega";
 }
 
-<div class="pagina-simple">
-    <div class="caja">
-        <h1>¿COMO SE JUEGA?</h1>
+<div class="pagina">
 
-        <p>
-            Entraste a La Bombonera y las puertas se cerraron.
-            Tenés 30 minutos para encontrar la salida.
+    <div class="pagina-contenido">
+
+        <p class="texto-pequeno">
+            ANTES DE ENTRAR
         </p>
 
-        <p>
-            Durante el recorrido vas a encontrar 20 acertijos.
-            Para avanzar tenés que resolverlos correctamente.
-        </p>
+        <h1>¿CÓMO SE JUEGA?</h1>
 
         <p>
-            Si necesitás ayuda podés pedir una pista. Pero cuidado:
-            cada respuesta incorrecta aumenta el nivel de peligro.
+            Vas a quedar encerrado durante la noche en La Bombonera.
+            Para escapar tenés que recorrer cinco salas y resolver
+            los acertijos que aparecen en cada una.
         </p>
 
-        <p>
-            Cuando llegues al nivel extremo, Fabra estará muy cerca.
-            Si te equivocás cinco veces, Fabra te alcanza y tenés que empezar nuevamente.
-        </p>
+        <div class="reglas">
 
-        <div class="tutorial-peligro">
-            <h2>NIVEL DE PELIGRO</h2>
+            <div>
+                <h2>01</h2>
+                <p>Resolvé los acertijos para avanzar.</p>
+            </div>
 
-            <p>0 errores → TRANQUILO</p>
-            <p>1 error → SOSPECHOSO</p>
-            <p>2 errores → PELIGROSO</p>
-            <p>3 errores → MUY PELIGROSO</p>
-            <p>4 errores → EXTREMO</p>
-            <p>5 errores → FABRA TE ALCANZÓ</p>
+            <div>
+                <h2>02</h2>
+                <p>Si necesitás ayuda, podés pedir una pista.</p>
+            </div>
+
+            <div>
+                <h2>03</h2>
+                <p>Cada error aumenta el nivel de peligro.</p>
+            </div>
+
+            <div>
+                <h2>04</h2>
+                <p>Con 5 errores, Fabra te alcanza.</p>
+            </div>
+
+            <div>
+                <h2>05</h2>
+                <p>Tenés 30 minutos para escapar.</p>
+            </div>
+
         </div>
 
-        <a asp-controller="Home" asp-action="Index" class="boton">
+        <p class="advertencia">
+            Riquelme puede dejarte pistas...
+            pero no significa que quiera ayudarte.
+        </p>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="boton">
             VOLVER
         </a>
+
     </div>
+
 </div>

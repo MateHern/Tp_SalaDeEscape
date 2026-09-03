@@ -3,23 +3,45 @@
 }
 
 <div class="inicio">
+
     <div class="inicio-contenido">
-        <p class="texto-pequeno">UNA NOCHE... UN ESTADIO... NINGUNA SALIDA.......</p>
 
-        <h1>ESCAPE DE LA<br />BOMBONERA</h1>
-
-        <p class="subtitulo">
-            Pasar una noche en La Bombonera parecía una buena idea...
-            hasta que las puertas se cerraron.
+        <p class="texto-pequeno">
+            LA MEJOR SALA PRESENTA
         </p>
 
-        <a asp-controller="Home" asp-action="Identificacion" class="boton">
-            COMENZAR
-        </a>
+        <h1>
+            ESCAPE DE<br />
+            LA BOMBONERA
+        </h1>
 
-        <div class="links-inicio">
-            <a asp-controller="Home" asp-action="Tutorial">¿CÓMO SE JUEGA?</a>
-            <a asp-controller="Home" asp-action="Integrantes">INTEGRANTES</a>
+        <p class="subtitulo">
+            Una noche. Cinco salas. Veinte acertijos.
+            Y alguien que no quiere que salgas.
+        </p>
+
+        <div class="botones-inicio">
+
+            <a asp-controller="Home"
+               asp-action="Identificacion"
+               class="boton">
+                COMENZAR
+            </a>
+
+            <a asp-controller="Home"
+               asp-action="Tutorial"
+               class="boton-secundario">
+                ¿CÓMO SE JUEGA?
+            </a>
+
+            <a asp-controller="Home"
+               asp-action="Integrantes"
+               class="boton-secundario">
+                INTEGRANTES
+            </a>
+
         </div>
+
     </div>
+
 </div>

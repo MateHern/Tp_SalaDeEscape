@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Identificación";
+}
+
+<div class="identificacion">
+
+    <div class="identificacion-caja">
+
+        <p class="texto-pequeno">ESCAPE DE LA BOMBONERA</p>
+
+        <h1>¿QUIÉN SE ANIMA?</h1>
+
+        <p>
+            La Bombonera está cerrada.
+            Esta noche vas a pasar la noche adentro.
+        </p>
+
+        <p>
+            Antes de entrar, necesitamos saber tu nombre.
+        </p>
+
+        <form asp-controller="Home"
+              asp-action="Comenzar"
+              method="post">
+
+            <input type="text"
+                   name="nombre"
+                   placeholder="Escribí tu nombre"
+                   autocomplete="off" />
+
+            <button type="submit" class="boton">
+                ENTRAR A LA BOMBONERA
+            </button>
+
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="mensaje-error">
+                 @ViewBag.Error
+            </p>
+        }
+
+    </div>
+
+</div>

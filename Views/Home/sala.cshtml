@@ -1,0 +1,235 @@
+@using LaMejorSala.Models
+
+@{
+    ViewData["Title"] = "Sala";
+
+    Sala sala = ViewBag.Sala;
+    Acertijo acertijo = ViewBag.Acertijo;
+
+    int errores = ViewBag.Errores;
+    string peligro = ViewBag.Peligro;
+    string mensajePeligro = ViewBag.MensajePeligro;
+}
+
+<div class="sala sala-@sala.Numero">
+
+    <div class="sala-contenido">
+
+        <div class="sala-arriba">
+            <span>SALA @sala.Numero DE 5</span>
+            <span id="timer">30:00</span>
+        </div>
+
+        <h1>@sala.Nombre</h1>
+
+        <p class="descripcion-sala">
+            @sala.Descripcion
+        </p>
+
+        @if (sala.Numero == 4)
+        {
+            <div class="prueba-imagenes">
+
+                @if (acertijo.Numero == 1)
+                {
+                    <div class="imagen-acertijo">
+
+                        <p class="numero-acertijo">
+                            DESAFÍO 1 DE 4
+                        </p>
+
+                        <img src="~/img/img1.jpg"
+                             alt="Imagen con un número escondido" />
+
+                        <h2>ENCONTRÁ EL NÚMERO AZUL</h2>
+
+                        <p>
+                            Hay un número escondido en la imagen.
+                            Mirá atentamente y encontrá el número azul.
+                        </p>
+
+                    </div>
+                }
+
+                @if (acertijo.Numero == 2)
+                {
+                    <div class="imagen-acertijo">
+
+                        <p class="numero-acertijo">
+                            DESAFÍO 2 DE 4
+                        </p>
+
+                        <img src="~/img/img2.jpg"
+                             alt="Imagen con un número escondido" />
+
+                        <h2>ENCONTRÁ EL NÚMERO AMARILLO</h2>
+
+                        <p>
+                            La imagen parece normal, pero alguien escondió
+                            un número. Encontrá el número amarillo.
+                        </p>
+
+                    </div>
+                }
+
+                @if (acertijo.Numero == 3)
+                {
+                    <div class="imagen-acertijo">
+
+                        <p class="numero-acertijo">
+                            DESAFÍO 3 DE 4
+                        </p>
+
+                        <img src="~/img/img3.jpg"
+                             alt="Imagen con un número escondido" />
+
+                        <h2>ENCONTRÁ EL NÚMERO ROJO</h2>
+
+                        <p>
+                            Ya encontraste dos números.
+                            Ahora buscá el último número escondido.
+                        </p>
+
+                    </div>
+                }
+
+                @if (acertijo.Numero == 4)
+                {
+                    <div class="codigo-final">
+
+                        <p class="numero-acertijo">
+                            DESAFÍO FINAL
+                        </p>
+
+                        <h2>EL ÚLTIMO MENSAJE DE RIQUELME</h2>
+
+                        <p>
+                            Encontraste los tres números.
+                            Pero todavía no podés salir.
+                        </p>
+
+                        <div class="mensaje-riquelme">
+                            <p>
+                                "El amarillo va primero."
+                            </p>
+
+                            <p>
+                                "El rojo va segundo."
+                            </p>
+
+                            <p>
+                                "El azul va último."
+                            </p>
+                        </div>
+
+                        <h2>
+                            ¿CUÁL ES EL CÓDIGO?
+                        </h2>
+
+                        <p>
+                            Juntá los tres números siguiendo el orden
+                            que dejó Riquelme.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="acertijo">
+
+                <p class="numero-acertijo">
+                    ACERTIJO @acertijo.Numero DE 4
+                </p>
+
+                <h2>
+                    @acertijo.Pregunta
+                </h2>
+
+            </div>
+        }
+
+        <form asp-controller="Home"
+              asp-action="Responder"
+              method="post">
+
+            <input type="hidden"
+                   name="idAcertijo"
+                   value="@acertijo.Id" />
+
+            <input type="text"
+                   name="respuesta"
+                   placeholder="Escribí tu respuesta"
+                   autocomplete="off" />
+
+            <button type="submit" class="boton">
+                COMPROBAR
+            </button>
+
+        </form>
+
+        <a asp-controller="Home"
+           asp-action="Pista"
+           asp-route-idAcertijo="@acertijo.Id"
+           class="boton-pista">
+            👁️ PEDIR PISTA
+        </a>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="mensaje-error">
+                ⚠️ @TempData["Error"]
+            </div>
+        }
+
+        @if (TempData["Correcto"] != null)
+        {
+            <div class="mensaje-correcto">
+                ✓ @TempData["Correcto"]
+            </div>
+        }
+
+        @if (TempData["Pista"] != null)
+        {
+            <div class="pista">
+
+                <h3>📻 MENSAJE DE RIQUELME</h3>
+
+                <p>
+                    @TempData["Pista"]
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <div class="peligro">
+
+        <div class="peligro-titulo">
+            👁️ PRESENCIA EN LA BOMBONERA
+        </div>
+
+        <div class="peligro-nivel">
+            NIVEL DE PELIGRO:
+            <strong>@peligro</strong>
+        </div>
+
+        <div class="barra-peligro">
+
+            <div class="barra-peligro-progreso"
+                 style="width:@(errores * 20)%">
+            </div>
+
+        </div>
+
+        <p>
+            @mensajePeligro
+        </p>
+
+    </div>
+
+</div>

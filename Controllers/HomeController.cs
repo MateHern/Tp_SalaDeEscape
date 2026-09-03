@@ -5,8 +5,6 @@ namespace LaMejorSala.Controllers
 {
     public class HomeController : Controller
     {
-        BD bd = new BD();
-
         public IActionResult Index()
         {
             return View();
@@ -30,61 +28,109 @@ namespace LaMejorSala.Controllers
         [HttpPost]
         public IActionResult Comenzar(string nombre)
         {
-            if (string.IsNullOrEmpty(nombre))
+            if (string.IsNullOrWhiteSpace(nombre))
             {
-                ViewBag.Error = "Tenés que ingresar tu nombre.";
+                ViewBag.Error = "Tenés que escribir tu nombre para comenzar.";
                 return View("Identificacion");
             }
 
-            int idJugador = bd.CrearJugador(nombre);
-            int idPartida = bd.CrearPartida(idJugador);
+            int idJugador = BD.CrearJugador(nombre);
+
+            int idPartida = BD.CrearPartida(idJugador);
 
             HttpContext.Session.SetInt32("PartidaId", idPartida);
             HttpContext.Session.SetInt32("SalaActual", 1);
             HttpContext.Session.SetString("NombreParticipante", nombre);
 
-            return RedirectToAction("Sala", new { numero = 1 });
+            return RedirectToAction("Sala");
         }
 
-        public IActionResult Sala(int numero)
+        public IActionResult Sala()
         {
-            int? idPartida = HttpContext.Session.GetInt32("PartidaId");
-
-            if (idPartida == null)
-            {
-                return RedirectToAction("Identificacion");
-            }
-
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
             int? salaActual = HttpContext.Session.GetInt32("SalaActual");
 
-            if (salaActual == null)
+            if (partidaId == null || salaActual == null)
             {
-                salaActual = 1;
+                return RedirectToAction("Index");
             }
 
-            if (numero > salaActual)
-            {
-                return RedirectToAction("Sala", new { numero = salaActual });
-            }
-
-            Sala sala = bd.ObtenerSala(numero);
+            Sala sala = BD.ObtenerSala(salaActual.Value);
 
             if (sala == null)
             {
                 return RedirectToAction("Index");
             }
 
-            List<Acertijo> acertijos = bd.ObtenerAcertijos(sala.Id);
+            int ultimaSalaResuelta = BD.ObtenerUltimaSalaResuelta(partidaId.Value);
+
+            if (sala.Numero > ultimaSalaResuelta + 1)
+            {
+                HttpContext.Session.SetInt32("SalaActual", ultimaSalaResuelta + 1);
+
+                return RedirectToAction("Sala");
+            }
+
+            Acertijo acertijo = BD.ObtenerAcertijoActual(
+                partidaId.Value,
+                sala.Id
+            );
+
+            if (acertijo == null)
+            {
+                BD.MarcarSalaResuelta(partidaId.Value, sala.Id);
+
+                if (sala.Numero == 5)
+                {
+                    BD.FinalizarPartida(partidaId.Value, "completada");
+
+                    return RedirectToAction("Victoria");
+                }
+
+                HttpContext.Session.SetInt32(
+                    "SalaActual",
+                    sala.Numero + 1
+                );
+
+                return RedirectToAction("Sala");
+            }
+
+            int errores = BD.ObtenerErrores(partidaId.Value);
+
+            string peligro;
+            string mensajePeligro;
+
+            if (errores >= 4)
+            {
+                peligro = "EXTREMO";
+                mensajePeligro = "FABRA ESTÁ CERCA.";
+            }
+            else if (errores == 3)
+            {
+                peligro = "MUY PELIGROSO";
+                mensajePeligro = "Una voz se escucha cerca: \"No tendrías que estar acá...\"";
+            }
+            else if (errores == 2)
+            {
+                peligro = "PELIGROSO";
+                mensajePeligro = "Algo golpea una puerta a lo lejos.";
+            }
+            else if (errores == 1)
+            {
+                peligro = "SOSPECHOSO";
+                mensajePeligro = "Escuchás pasos en algún lugar del pasillo...";
+            }
+            else
+            {
+                peligro = "TRANQUILO";
+                mensajePeligro = "No escuchás nada. El estadio parece vacío.";
+            }
 
             ViewBag.Sala = sala;
-            ViewBag.Acertijos = acertijos;
-            ViewBag.NumeroSala = numero;
-
-            int errores = bd.ObtenerCantidadErrores(idPartida.Value);
-
+            ViewBag.Acertijo = acertijo;
             ViewBag.Errores = errores;
-            ViewBag.Peligro = ObtenerPeligro(errores);
-            ViewBag.MensajePeligro = ObtenerMensajePeligro(errores);
+            ViewBag.Peligro = peligro;
+            ViewBag.MensajePeligro = mensajePeligro;
 
             return View();
         }
@@ -92,170 +138,135 @@ namespace LaMejorSala.Controllers
         [HttpPost]
         public IActionResult Responder(int idAcertijo, string respuesta)
         {
-            int? idPartida = HttpContext.Session.GetInt32("PartidaId");
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
+            int? salaActual = HttpContext.Session.GetInt32("SalaActual");
 
-            if (idPartida == null)
-            {
-                return RedirectToAction("Identificacion");
-            }
-
-            Acertijo acertijo = bd.ObtenerAcertijo(idAcertijo);
-
-            if (acertijo == null)
+            if (partidaId == null || salaActual == null)
             {
                 return RedirectToAction("Index");
             }
 
-            bool correcta = false;
-
-            if (!string.IsNullOrEmpty(respuesta))
+            if (string.IsNullOrWhiteSpace(respuesta))
             {
-                correcta = respuesta.Trim().ToLower() ==
-                           acertijo.RespuestaCorrecta.Trim().ToLower();
+                TempData["Error"] = "Tenés que escribir una respuesta.";
+                return RedirectToAction("Sala");
             }
 
-            bd.GuardarRespuesta(
-                idPartida.Value,
-                acertijo.IdSala,
+            Sala sala = BD.ObtenerSala(salaActual.Value);
+
+            Acertijo acertijo = BD.ObtenerAcertijo(idAcertijo);
+
+            if (sala == null || acertijo == null)
+            {
+                return RedirectToAction("Sala");
+            }
+
+            string respuestaJugador = respuesta.Trim().ToLower();
+            string respuestaCorrecta = acertijo.RespuestaCorrecta.Trim().ToLower();
+
+            bool esCorrecta = respuestaJugador == respuestaCorrecta;
+
+            BD.GuardarRespuesta(
+                partidaId.Value,
+                sala.Id,
                 acertijo.Id,
-                respuesta,
-                correcta
+                respuestaJugador,
+                esCorrecta
             );
 
-            int errores = bd.ObtenerCantidadErrores(idPartida.Value);
-
-            if (errores >= 5)
+            if (!esCorrecta)
             {
-                bd.FinalizarPartida(idPartida.Value, "ABORTADA");
+                int errores = BD.ObtenerErrores(partidaId.Value);
 
-                return RedirectToAction("FabraAlcanzo");
+                if (errores >= 5)
+                {
+                    BD.FinalizarPartida(partidaId.Value, "abortada");
+
+                    return RedirectToAction("FabraAlcanzo");
+                }
+
+                TempData["Error"] = "La respuesta es incorrecta. Fabra está cada vez más cerca.";
+
+                return RedirectToAction("Sala");
             }
 
-            if (!correcta)
-            {
-                TempData["Error"] = "La respuesta no es correcta. Intentá nuevamente.";
+            TempData["Correcto"] = "Respuesta correcta.";
 
-                return RedirectToAction(
-                    "Sala",
-                    new { numero = acertijo.IdSala }
+            int acertijosResueltos =
+                BD.CantidadAcertijosResueltos(
+                    partidaId.Value,
+                    sala.Id
+                );
+
+            if (acertijosResueltos >= 4)
+            {
+                BD.MarcarSalaResuelta(
+                    partidaId.Value,
+                    sala.Id
+                );
+
+                if (sala.Numero == 5)
+                {
+                    BD.FinalizarPartida(
+                        partidaId.Value,
+                        "completada"
+                    );
+
+                    return RedirectToAction("Victoria");
+                }
+
+                HttpContext.Session.SetInt32(
+                    "SalaActual",
+                    sala.Numero + 1
                 );
             }
 
-
-            TempData["Correcto"] = "¡Respuesta correcta!";
-
-            return RedirectToAction(
-                "Sala",
-                new { numero = acertijo.IdSala }
-            );
+            return RedirectToAction("Sala");
         }
 
-        public IActionResult Pista(int idAcertijo, int numeroSala)
+        public IActionResult Pista(int idAcertijo)
         {
-            int? idPartida = HttpContext.Session.GetInt32("PartidaId");
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
 
-            if (idPartida == null)
+            if (partidaId == null)
             {
-                return RedirectToAction("Identificacion");
+                return RedirectToAction("Index");
             }
 
+            Acertijo acertijo = BD.ObtenerAcertijo(idAcertijo);
 
-            Acertijo acertijo = bd.ObtenerAcertijo(idAcertijo);
-
-            if (acertijo != null)
+            if (acertijo == null)
             {
-                bd.GuardarPista(idPartida.Value, idAcertijo);
-
-                TempData["Pista"] = acertijo.Pista;
+                return RedirectToAction("Sala");
             }
 
-            return RedirectToAction("Sala", new { numero = numeroSala });
+            BD.GuardarPista(
+                partidaId.Value,
+                idAcertijo
+            );
+
+            TempData["Pista"] = acertijo.Pista;
+
+            return RedirectToAction("Sala");
         }
 
         public IActionResult FabraAlcanzo()
         {
+            HttpContext.Session.Clear();
+
             return View();
         }
 
-
-
         public IActionResult VolverAIntentar()
         {
-            string nombre = HttpContext.Session.GetString("NombreParticipante");
-
             HttpContext.Session.Clear();
-
-            if (nombre != null)
-            {
-                int idJugador = bd.CrearJugador(nombre);
-                int idPartida = bd.CrearPartida(idJugador);
-
-
-                HttpContext.Session.SetInt32("PartidaId", idPartida);
-                HttpContext.Session.SetInt32("SalaActual", 1);
-                HttpContext.Session.SetString("NombreParticipante", nombre);
-
-                return RedirectToAction("Sala", new { numero = 1 });
-            }
 
             return RedirectToAction("Identificacion");
         }
 
-
-
-        private string ObtenerPeligro(int errores)
+        public IActionResult Victoria()
         {
-            if (errores == 0)
-            {
-                return "TRANQUILO";
-            }
-
-
-            if (errores == 1)
-            {
-                return "SOSPECHOSO";
-            }
-
-
-
-
-            if (errores == 2)
-            {
-                return "PELIGROSO";
-            }
-
-            if (errores == 3)
-            {
-                return "MUY PELIGROSO";
-            }
-
-            return "EXTREMO";
-        }
-
-        private string ObtenerMensajePeligro(int errores)
-        {
-            if (errores == 0)
-            {
-                return "No escuchás nada. El estadio parece vacío.";
-            }
-
-            if (errores == 1)
-            {
-                return "Escuchás pasos en algún lugar del pasillo...";
-            }
-
-
-            if (errores == 2)
-            {
-                return "Algo golpea una puerta a lo lejos.";
-            }
-
-            if (errores == 3)
-            {
-                return "Una voz se escucha cerca: No tendrías que estar acá...";
-            }
-
-            return "FABRA ESTÁ MUY CERCA.";
+            return View();
         }
     }
 }
