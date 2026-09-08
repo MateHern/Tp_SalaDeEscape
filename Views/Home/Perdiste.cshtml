@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Perdiste";
+}
+
+<div class="victoria">
+    <div class="victoria-contenido">
+
+        <p class="texto-pequeno">SE ACABÓ EL TIEMPO</p>
+
+        <h1>PERDISTE PA</h1>
+
+        <p>
+            El reloj terminó y la Bombonera te consumió antes de que pudieras escapar.
+        </p>
+
+        <p>
+            Volvé a empezar desde el principio y tratá de no perder otra vez el tiempo.
+        </p>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="boton">
+            VOLVER AL INICIO
+        </a>
+
+    </div>
+</div>
+
+<script>
+    setTimeout(() => {
+        window.location.href = '/Home/Index';
+    }, 3000);
+</script>

@@ -66,9 +66,7 @@ Z:\prog\LaMejorSala\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 Z:\prog\LaMejorSala\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 Z:\prog\LaMejorSala\obj\Debug\net9.0\scopedcss\bundle\LaMejorSala.styles.css
 Z:\prog\LaMejorSala\obj\Debug\net9.0\scopedcss\projectbundle\LaMejorSala.bundle.scp.css
-Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-od5k4zc24o.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\vi2latskai-61n19gt1b8.gz
-Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\07i36plomg-xtxxf3hu2r.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\oggs0ajlr8-bqjiyaj88i.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\ts9blvkphb-c2jlpeoesf.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\tjqokacird-erw9l3u2r3.gz
@@ -140,3 +138,5 @@ Z:\prog\LaMejorSala\obj\Debug\net9.0\refint\LaMejorSala.dll
 Z:\prog\LaMejorSala\obj\Debug\net9.0\LaMejorSala.pdb
 Z:\prog\LaMejorSala\obj\Debug\net9.0\LaMejorSala.genruntimeconfig.cache
 Z:\prog\LaMejorSala\obj\Debug\net9.0\ref\LaMejorSala.dll
+Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-944mudiunx.gz
+Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\07i36plomg-qgp9f43ar1.gz

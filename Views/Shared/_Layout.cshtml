@@ -1,4 +1,18 @@
-﻿<!DOCTYPE html>
+﻿@{
+    long? tiempoInicioPartida = null;
+    var tiempoInicioRaw = Context.Session.GetString("TiempoInicioPartida");
+
+    if (!string.IsNullOrWhiteSpace(tiempoInicioRaw) && long.TryParse(tiempoInicioRaw, out long tiempoInicio))
+    {
+        tiempoInicioPartida = tiempoInicio;
+    }
+
+    var tiempoFinPartida = tiempoInicioPartida.HasValue
+        ? tiempoInicioPartida.Value + (30 * 60 * 1000)
+        : 0L;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +23,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LaMejorSala.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body data-timer-end="@tiempoFinPartida">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -30,6 +44,14 @@
                 </div>
             </div>
         </nav>
+
+        @if (Context.Session.GetInt32("PartidaId") != null)
+        {
+            <div class="contador-global">
+                <span class="contador-label">TIEMPO RESTANTE</span>
+                <span class="contador-valor" data-timer="countdown">30:00</span>
+            </div>
+        }
     </header>
     <div class="container">
         <main role="main" class="pb-3">

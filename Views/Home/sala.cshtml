@@ -6,9 +6,9 @@
     Sala sala = ViewBag.Sala;
     Acertijo acertijo = ViewBag.Acertijo;
 
-    int errores = ViewBag.Errores;
-    string peligro = ViewBag.Peligro;
-    string mensajePeligro = ViewBag.MensajePeligro;
+   int errores = ViewBag.Errores ?? 0;
+    string peligro = ViewBag.Peligro ?? "NIVEL 1";
+        string mensajePeligro = ViewBag.MensajePeligro ?? "No escuchás nada. El estadio parece vacío.";
 }
 
 <div class="sala sala-@sala.Numero">
@@ -17,7 +17,6 @@
 
         <div class="sala-arriba">
             <span>SALA @sala.Numero DE 5</span>
-            <span id="timer">30:00</span>
         </div>
 
         <h1>@sala.Nombre</h1>
@@ -26,9 +25,9 @@
             @sala.Descripcion
         </p>
 
-        @if (sala.Numero == 2)
-        {
-            int situacion = ViewBag.Situacion;
+        @if (sala.Numero == 2) 
+{ 
+            int situacion = ViewBag.Situacion is int ? (int)ViewBag.Situacion : 1;
 
             <div class="prueba-puertas">
 
@@ -46,12 +45,12 @@
 
                 @if (situacion == 2)
                 {
-                    <img src="~/img/puerta2.jpg" class="imagen-puerta" alt="Túnel oscuro">
+                    <img src="~/img/puerta2.jfif" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
                 @if (situacion == 3)
                 {
-                    <img src="~/img/puerta3.jpg" class="imagen-puerta" alt="Túnel oscuro">
+                    <img src="~/img/puerta3.jfif" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
                 <div class="botones-puerta">
@@ -84,7 +83,7 @@
                                 DESAFÍO 1 DE 4
                             </p>
 
-                            <img src="~/img/numero1.jpg"
+                            <img src="~/img/numero1.jfif"
                                  alt="Imagen con un número escondido" />
 
                             <h2>ENCONTRÁ EL NÚMERO</h2>
@@ -105,7 +104,7 @@
                                 DESAFÍO 2 DE 4
                             </p>
 
-                            <img src="~/img/numero2.jpg"
+                            <img src="~/img/numero2.jfif"
                                  alt="Imagen con un número escondido" />
 
                             <h2>ENCONTRÁ EL NÚMERO</h2>
@@ -125,7 +124,7 @@
                                 DESAFÍO 3 DE 4
                             </p>
 
-                            <img src="~/img/numero3.jpg"
+                            <img src="~/img/numero3.jfif"
                                  alt="Imagen con un número escondido" />
 
                             <h2>ENCONTRÁ EL NÚMERO</h2>
