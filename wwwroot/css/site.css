@@ -241,23 +241,33 @@ input[type="text"]:focus {
 }
 
 .sala-1 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/img1.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/Sala1.jfif');
+    background-size: cover;
+    background-position: center;
 }
 
 .sala-2 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/img2.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/sala2.jfif');
+    background-size: cover;
+    background-position: center;
 }
 
 .sala-3 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/img3.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/sala3.jfif');
+    background-size: cover;
+    background-position: center;
 }
 
 .sala-4 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/img4.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/sala4.jfif');
+    background-size: cover;
+    background-position: center;
 }
 
 .sala-5 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/img5.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('/img/sala5.jfif');
+    background-size: cover;
+    background-position: center;
 }
 
 .sala-contenido {
