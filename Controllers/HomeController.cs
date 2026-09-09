@@ -344,11 +344,10 @@ public IActionResult ElegirPuerta(int puerta)
                 int errores = BD.ObtenerErrores(partidaId.Value);
 
                 if (errores >= 5)
-                {
-                    BD.FinalizarPartida(partidaId.Value, "abortada");
-
-                    return RedirectToAction("FabraAlcanzo");
-                }
+              {
+                BD.FinalizarPartida(partidaId.Value, "abortada");
+                return RedirectToAction("Perdiste");
+             }
 
                 TempData["Error"] = "La respuesta es incorrecta. Fabra está cada vez más cerca.";
 

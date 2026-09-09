@@ -4,30 +4,14 @@
 
 <div class="victoria">
     <div class="victoria-contenido">
+        <h1 class="perdiste-titulo">PERDISTE PA</h1>
 
-        <p class="texto-pequeno">SE ACABÓ EL TIEMPO</p>
-
-        <h1>PERDISTE PA</h1>
-
-        <p>
-            El reloj terminó y la Bombonera te consumió antes de que pudieras escapar.
-        </p>
-
-        <p>
-            Volvé a empezar desde el principio y tratá de no perder otra vez el tiempo.
-        </p>
+        <img src="~/img/FABRA FINAL.jfif" alt="Fabra" class="imagen-fabra-final">
 
         <a asp-controller="Home"
            asp-action="Index"
-           class="boton">
-            VOLVER AL INICIO
+           class="boton boton-volver">
+            VOLVER A TRATAR
         </a>
-
     </div>
 </div>
-
-<script>
-    setTimeout(() => {
-        window.location.href = '/Home/Index';
-    }, 3000);
-</script>
