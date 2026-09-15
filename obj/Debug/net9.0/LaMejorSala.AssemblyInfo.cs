@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LaMejorSala")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f7fddfa987349c7287b192ce8e454733d258653c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bc16bef11b96a64a54f41ba3af92fd0626ef84e")]
 [assembly: System.Reflection.AssemblyProductAttribute("LaMejorSala")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LaMejorSala")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
