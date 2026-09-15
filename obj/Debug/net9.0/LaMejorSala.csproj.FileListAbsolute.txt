@@ -93,7 +93,6 @@ Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\7dymq1ldg9-06098lyss8.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\pxnjwplp6u-nvvlpmu67g.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\8jwlvgjgh9-s35ty4nyc5.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\2w1e1c9rwk-pj5nd1wqec.gz
-Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\rhs7b0zk0d-46ein0sx1k.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\93njuy06jl-v0zj4ognzu.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\wdptls48xn-37tfw0ft22.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\n6xzf8r27a-hrwsygsryq.gz
@@ -139,4 +138,5 @@ Z:\prog\LaMejorSala\obj\Debug\net9.0\LaMejorSala.pdb
 Z:\prog\LaMejorSala\obj\Debug\net9.0\LaMejorSala.genruntimeconfig.cache
 Z:\prog\LaMejorSala\obj\Debug\net9.0\ref\LaMejorSala.dll
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\07i36plomg-tccfe15yzf.gz
-Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-n1669tlnqa.gz
+Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\rhs7b0zk0d-j7ly386xjr.gz
+Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-ubxsmzgeei.gz

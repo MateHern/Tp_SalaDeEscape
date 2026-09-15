@@ -299,4 +299,22 @@ public class BD
             });
         }
     }
+
+    public static Acertijo ObtenerPrimerAcertijoDeSala(int idSala)
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            string sql = @"
+                SELECT TOP 1 *
+                FROM Acertijo
+                WHERE IdSala = @IdSala
+                ORDER BY Numero
+            ";
+
+            return connection.QueryFirstOrDefault<Acertijo>(sql, new
+            {
+                IdSala = idSala
+            });
+        }
+    }
 }

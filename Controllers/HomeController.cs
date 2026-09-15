@@ -79,55 +79,96 @@ namespace LaMejorSala.Controllers
                 sala.Id
             );
             if (sala.Numero == 2)
-{
-    int? situacion = HttpContext.Session.GetInt32("SituacionSala2");
+            {
+                int? situacion = HttpContext.Session.GetInt32("SituacionSala2");
 
-    if (situacion == null)
-    {
-        situacion = 1;
-        HttpContext.Session.SetInt32("SituacionSala2", 1);
-    }
+                if (situacion == null)
+                {
+                    situacion = 1;
+                    HttpContext.Session.SetInt32("SituacionSala2", 1);
+                }
 
-    int erroresSala = BD.ObtenerErrores(partidaId.Value);
+                int erroresSala = BD.ObtenerErrores(partidaId.Value);
 
-    string peligroSala;
-    string mensajePeligroSala;
+                string peligroSala;
+                string mensajePeligroSala;
 
-    if (erroresSala >= 4)
-    {
-        peligroSala = "EXTREMO";
-        mensajePeligroSala = "FABRA ESTÁ CERCA.";
-    }
-    else if (erroresSala == 3)
-    {
-        peligroSala = "MUY PELIGROSO";
-        mensajePeligroSala = "Una voz se escucha cerca: \"No tendrías que estar acá...\"";
-    }
-    else if (erroresSala == 2)
-    {
-        peligroSala = "PELIGROSO";
-        mensajePeligroSala = "Algo golpea una puerta a lo lejos.";
-    }
-    else if (erroresSala == 1)
-    {
-        peligroSala = "SOSPECHOSO";
-        mensajePeligroSala = "Escuchás pasos en algún lugar del pasillo...";
-    }
-    else
-    {
-        peligroSala = "TRANQUILO";
-        mensajePeligroSala = "No escuchás nada. El estadio parece vacío.";
-    }
+                if (erroresSala >= 4)
+                {
+                    peligroSala = "EXTREMO";
+                    mensajePeligroSala = "FABRA ESTÁ CERCA.";
+                }
+                else if (erroresSala == 3)
+                {
+                    peligroSala = "MUY PELIGROSO";
+                    mensajePeligroSala = "Una voz se escucha cerca: \"No tendrías que estar acá...\"";
+                }
+                else if (erroresSala == 2)
+                {
+                    peligroSala = "PELIGROSO";
+                    mensajePeligroSala = "Algo golpea una puerta a lo lejos.";
+                }
+                else if (erroresSala == 1)
+                {
+                    peligroSala = "SOSPECHOSO";
+                    mensajePeligroSala = "Escuchás pasos en algún lugar del pasillo...";
+                }
+                else
+                {
+                    peligroSala = "TRANQUILO";
+                    mensajePeligroSala = "No escuchás nada. El estadio parece vacío.";
+                }
 
-    ViewBag.Sala = sala;
-    ViewBag.Acertijo = acertijo;
-    ViewBag.Situacion = situacion;
-    ViewBag.Errores = erroresSala;
-    ViewBag.Peligro = peligroSala;
-    ViewBag.MensajePeligro = mensajePeligroSala;
+                ViewBag.Sala = sala;
+                ViewBag.Acertijo = acertijo;
+                ViewBag.Situacion = situacion;
+                ViewBag.Errores = erroresSala;
+                ViewBag.Peligro = peligroSala;
+                ViewBag.MensajePeligro = mensajePeligroSala;
 
-    return View();
-}
+                return View();
+            }
+
+            if (sala.Numero == 1)
+            {
+                int errores = BD.ObtenerErrores(partidaId.Value);
+
+                string peligro;
+                string mensajePeligro;
+
+                if (errores >= 4)
+                {
+                    peligro = "EXTREMO";
+                    mensajePeligro = "FABRA ESTÁ CERCA.";
+                }
+                else if (errores == 3)
+                {
+                    peligro = "MUY PELIGROSO";
+                    mensajePeligro = "Una voz se escucha cerca: \"No tendrías que estar acá...\"";
+                }
+                else if (errores == 2)
+                {
+                    peligro = "PELIGROSO";
+                    mensajePeligro = "Algo golpea una puerta a lo lejos.";
+                }
+                else if (errores == 1)
+                {
+                    peligro = "SOSPECHOSO";
+                    mensajePeligro = "Escuchás pasos en algún lugar del pasillo...";
+                }
+                else
+                {
+                    peligro = "TRANQUILO";
+                    mensajePeligro = "No escuchás nada. El estadio parece vacío.";
+                }
+
+                ViewBag.Sala = sala;
+                ViewBag.Errores = errores;
+                ViewBag.Peligro = peligro;
+                ViewBag.MensajePeligro = mensajePeligro;
+
+                return View();
+            }
 
             if (acertijo == null)
             {
@@ -329,6 +370,11 @@ public IActionResult ElegirPuerta(int puerta)
             string respuestaJugador = respuesta.Trim().ToLower();
             string respuestaCorrecta = acertijo.RespuestaCorrecta.Trim().ToLower();
 
+            if (sala.Numero == 4 && acertijo.Numero == 4)
+            {
+                respuestaCorrecta = "739590";
+            }
+
             bool esCorrecta = respuestaJugador == respuestaCorrecta;
 
             BD.GuardarRespuesta(
@@ -344,10 +390,10 @@ public IActionResult ElegirPuerta(int puerta)
                 int errores = BD.ObtenerErrores(partidaId.Value);
 
                 if (errores >= 5)
-              {
-                BD.FinalizarPartida(partidaId.Value, "abortada");
-                return RedirectToAction("Perdiste");
-             }
+                {
+                    BD.FinalizarPartida(partidaId.Value, "abortada");
+                    return RedirectToAction("Perdiste");
+                }
 
                 TempData["Error"] = "La respuesta es incorrecta. Fabra está cada vez más cerca.";
 
@@ -438,6 +484,72 @@ public IActionResult ElegirPuerta(int puerta)
         public IActionResult Victoria()
         {
             return View();
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult RegistrarErrorSala1()
+        {
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
+
+            if (partidaId == null)
+            {
+                return Json(new { ok = false });
+            }
+
+            Acertijo acertijo = BD.ObtenerPrimerAcertijoDeSala(1);
+
+            if (acertijo != null)
+            {
+                BD.GuardarRespuesta(
+                    partidaId.Value,
+                    1,
+                    acertijo.Id,
+                    "Secuencia incorrecta",
+                    false
+                );
+            }
+
+            int errores = BD.ObtenerErrores(partidaId.Value);
+
+            if (errores >= 5)
+            {
+                BD.FinalizarPartida(partidaId.Value, "abortada");
+                return Json(new
+                {
+                    ok = true,
+                    peligroMaximo = true,
+                    redirect = Url.Action("FabraAlcanzo")
+                });
+            }
+
+            return Json(new
+            {
+                ok = true,
+                peligroMaximo = false,
+                errores = errores
+            });
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult CompletarSala1()
+        {
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
+
+            if (partidaId == null)
+            {
+                return Json(new { ok = false });
+            }
+
+            BD.MarcarSalaResuelta(partidaId.Value, 1);
+            HttpContext.Session.SetInt32("SalaActual", 2);
+
+            return Json(new
+            {
+                ok = true,
+                redirect = Url.Action("Sala")
+            });
         }
     }
 }

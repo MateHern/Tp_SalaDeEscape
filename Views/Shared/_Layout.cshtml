@@ -25,29 +25,29 @@
 </head>
 <body data-timer-end="@tiempoFinPartida">
     <header>
-    <nav class="header">
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="volver-inicio">
-            VOLVER AL INICIO
-        </a>
-    </nav>
+        <nav class="header">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="volver-inicio">
+                VOLVER AL INICIO
+            </a>
+        </nav>
+    </header>
 
-    @if (Context.Session.GetInt32("PartidaId") != null) 
-    { 
-        <div class="contador-global"> 
-            <span class="contador-label">TIEMPO RESTANTE</span> 
-            <span class="contador-valor" data-timer="countdown">30:00</span> 
-        </div> 
-    } 
-</header>
+    @if (Context.Session.GetInt32("PartidaId") != null)
+    {
+        <div class="contador-global">
+            <span class="contador-label">TIEMPO RESTANTE</span>
+            <span class="contador-valor" data-timer="countdown">30:00</span>
+        </div>
+    }
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
