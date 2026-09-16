@@ -6,10 +6,53 @@
     Sala sala = ViewBag.Sala;
     Acertijo acertijo = ViewBag.Acertijo;
 
-   int errores = ViewBag.Errores ?? 0;
+    int errores = ViewBag.Errores ?? 0;
     string peligro = ViewBag.Peligro ?? "NIVEL 1";
-        string mensajePeligro = ViewBag.MensajePeligro ?? "No escuchás nada. El estadio parece vacío.";
+    string mensajePeligro = ViewBag.MensajePeligro ?? "No escuchás nada. El estadio parece vacío.";
+    int totalPreguntasSala = sala != null && sala.Numero == 3 ? 7 : 4;
 }
+
+<script>
+    const salaNumeroActual = @sala.Numero;
+    let audioSalaActual = null;
+    let salaMusicaActual = null;
+
+    function reproducirMusicaPorSala(numeroSala) {
+        if (salaMusicaActual === numeroSala && audioSalaActual && !audioSalaActual.paused) {
+            return;
+        }
+
+        if (audioSalaActual && !audioSalaActual.paused) {
+            audioSalaActual.pause();
+            audioSalaActual.currentTime = 0;
+        }
+
+        const rutaAudio = `/audio/Sala${numeroSala}.mp3`;
+        const audio = new Audio(rutaAudio);
+        audio.loop = true;
+        audio.volume = 0.45;
+        audioSalaActual = audio;
+        salaMusicaActual = numeroSala;
+
+        audio.addEventListener('error', () => {
+            if (audioSalaActual === audio) {
+                audioSalaActual = null;
+                salaMusicaActual = null;
+            }
+        });
+
+        audio.play().catch(() => {
+            if (audioSalaActual === audio) {
+                audioSalaActual = null;
+                salaMusicaActual = null;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        reproducirMusicaPorSala(salaNumeroActual);
+    });
+</script>
 
 <div class="sala sala-@sala.Numero">
 
@@ -31,45 +74,45 @@
 
                 <div class="simon-header">
                     <h2>EL VESTUARIO ABANDONADO</h2>
-                    <p>REPETÍ LA SECUENCIA</p>
                 </div>
 
                 <div id="mensaje-sala1" class="mensaje-simon">MEMORIZÁ LA SECUENCIA</div>
 
                 <div class="tablero-simon">
-                    <button type="button" class="jugador-btn" data-index="0" data-imagen="~/img/battaglia.jpg">
-                        <img src="~/img/battaglia.jpg" alt="SEBASTIÁN BATTAGLIA" />
+                    <button type="button" class="jugador-btn" data-index="0" data-imagen="/img/battaglia.jpg">
+                        <img src="/img/battaglia.jpg" alt="SEBASTIÁN BATTAGLIA" />
                         <span class="jugador-nombre">SEBASTIÁN BATTAGLIA</span>
                     </button>
 
-                    <button type="button" class="jugador-btn" data-index="1" data-imagen="~/img/roncaglia.jpg">
-                        <img src="~/img/roncaglia.jpg" alt="FACUNDO RONCAGLIA" />
+                    <button type="button" class="jugador-btn" data-index="1" data-imagen="/img/roncaglia.jpg">
+                        <img src="/img/roncaglia.jpg" alt="FACUNDO RONCAGLIA" />
                         <span class="jugador-nombre">FACUNDO RONCAGLIA</span>
                     </button>
 
-                    <button type="button" class="jugador-btn" data-index="2" data-imagen="~/img/centurion.jpg">
-                        <img src="~/img/centurion.jpg" alt="RICARDO CENTURIÓN" />
+                    <button type="button" class="jugador-btn" data-index="2" data-imagen="/img/centurion.jpg">
+                        <img src="/img/centurion.jpg" alt="RICARDO CENTURIÓN" />
                         <span class="jugador-nombre">RICARDO CENTURIÓN</span>
                     </button>
 
-                    <button type="button" class="jugador-btn" data-index="3" data-imagen="~/img/gimenez.jpg">
-                        <img src="~/img/gimenez.jpg" alt="MILTON GIMÉNEZ" />
+                    <button type="button" class="jugador-btn" data-index="3" data-imagen="/img/gimenez.jpg">
+                        <img src="/img/gimenez.jpg" alt="MILTON GIMÉNEZ" />
                         <span class="jugador-nombre">MILTON GIMÉNEZ</span>
                     </button>
 
-                    <button type="button" class="jugador-btn" data-index="4" data-imagen="~/img/rojo.jpg">
-                        <img src="~/img/rojo.jpg" alt="MARCOS ROJO" />
+                    <button type="button" class="jugador-btn" data-index="4" data-imagen="/img/rojo.jpg">
+                        <img src="/img/rojo.jpg" alt="MARCOS ROJO" />
                         <span class="jugador-nombre">MARCOS ROJO</span>
                     </button>
 
-                    <button type="button" class="jugador-btn" data-index="5" data-imagen="~/img/briasco.jpg">
-                        <img src="~/img/briasco.jpg" alt="NORBERTO BRIASCO" />
+                    <button type="button" class="jugador-btn" data-index="5" data-imagen="/img/briasco.jpg">
+                        <img src="/img/briasco.jpg" alt="NORBERTO BRIASCO" />
                         <span class="jugador-nombre">NORBERTO BRIASCO</span>
                     </button>
                 </div>
 
                 <div class="acciones-simon">
                     <button type="button" id="iniciar-sala1" class="boton">COMENZAR</button>
+                    <button type="button" id="repetir-secuencia-sala1" class="boton boton-secundario" disabled>🔄 REPETIR SECUENCIA</button>
                 </div>
 
                 <div id="sala1-finished" class="sala1-finished oculto">
@@ -93,29 +136,36 @@
                 let indiceUsuarioSala1 = 0;
                 let nivelSala1 = 1;
                 let reproduciendoSala1 = false;
+                let timerSecuenciaSala1 = null;
+                let timeoutFinSecuenciaSala1 = null;
 
                 const mensajeSala1 = document.getElementById('mensaje-sala1');
                 const botonesSala1 = document.querySelectorAll('.jugador-btn');
-
-                botonesSala1.forEach((boton) => {
-                    const img = boton.querySelector('img');
-                    const nombre = boton.querySelector('.jugador-nombre');
-
-                    if (img && nombre) {
-                        img.onerror = function () {
-                            img.style.display = 'none';
-                            nombre.style.display = 'block';
-                        };
-                    }
-                });
-
                 const botonIniciarSala1 = document.getElementById('iniciar-sala1');
+                const botonRepetirSala1 = document.getElementById('repetir-secuencia-sala1');
                 const botonAbrirPuertaSala1 = document.getElementById('abrir-puerta-sala1');
                 const finalSala1 = document.getElementById('sala1-finished');
+
+                function limpiarTimersSala1() {
+                    if (timerSecuenciaSala1) {
+                        clearInterval(timerSecuenciaSala1);
+                        timerSecuenciaSala1 = null;
+                    }
+
+                    if (timeoutFinSecuenciaSala1) {
+                        clearTimeout(timeoutFinSecuenciaSala1);
+                        timeoutFinSecuenciaSala1 = null;
+                    }
+                }
 
                 function mostrarMensajeSala1(texto, tipo = 'normal') {
                     mensajeSala1.textContent = texto;
                     mensajeSala1.className = 'mensaje-simon ' + tipo;
+                }
+
+                function actualizarBotonRepetirSala1() {
+                    if (!botonRepetirSala1) return;
+                    botonRepetirSala1.disabled = reproduciendoSala1 || secuenciaSala1.length === 0;
                 }
 
                 function iluminarBotonSala1(index) {
@@ -127,6 +177,7 @@
                 }
 
                 function generarSecuenciaSala1() {
+                    limpiarTimersSala1();
                     secuenciaSala1 = [];
                     const longitud = nivelSala1 + 1;
 
@@ -139,18 +190,27 @@
                 }
 
                 function reproducirSecuenciaSala1() {
+                    limpiarTimersSala1();
+
+                    if (!secuenciaSala1.length) {
+                        return;
+                    }
+
                     reproduciendoSala1 = true;
+                    actualizarBotonRepetirSala1();
                     mostrarMensajeSala1('MEMORIZÁ LA SECUENCIA');
 
                     let paso = 0;
-                    const temporizador = setInterval(() => {
+                    timerSecuenciaSala1 = setInterval(() => {
                         iluminarBotonSala1(secuenciaSala1[paso]);
                         paso++;
 
                         if (paso >= secuenciaSala1.length) {
-                            clearInterval(temporizador);
-                            setTimeout(() => {
+                            clearInterval(timerSecuenciaSala1);
+                            timerSecuenciaSala1 = null;
+                            timeoutFinSecuenciaSala1 = setTimeout(() => {
                                 reproduciendoSala1 = false;
+                                actualizarBotonRepetirSala1();
                                 mostrarMensajeSala1('REPETÍ LA SECUENCIA');
                             }, 500);
                         }
@@ -160,6 +220,7 @@
                 function iniciarSala1() {
                     finalSala1.classList.add('oculto');
                     botonAbrirPuertaSala1.disabled = true;
+                    limpiarTimersSala1();
                     generarSecuenciaSala1();
                 }
 
@@ -179,13 +240,15 @@
 
                         setTimeout(() => {
                             reproduciendoSala1 = false;
-                            generarSecuenciaSala1();
+                            actualizarBotonRepetirSala1();
+                            window.location.reload();
                         }, 1000);
                     })
                     .catch(() => {
                         setTimeout(() => {
                             reproduciendoSala1 = false;
-                            generarSecuenciaSala1();
+                            actualizarBotonRepetirSala1();
+                            window.location.reload();
                         }, 1000);
                     });
                 }
@@ -222,6 +285,7 @@
                                     mostrarMensajeSala1('SECUENCIA COMPLETADA', 'ok');
                                     finalSala1.classList.remove('oculto');
                                     botonAbrirPuertaSala1.disabled = false;
+                                    botonRepetirSala1.disabled = true;
                                     return;
                                 }
 
@@ -239,6 +303,11 @@
                 });
 
                 botonIniciarSala1.addEventListener('click', iniciarSala1);
+                botonRepetirSala1.addEventListener('click', () => {
+                    if (!reproduciendoSala1 && secuenciaSala1.length) {
+                        reproducirSecuenciaSala1();
+                    }
+                });
                 botonAbrirPuertaSala1.addEventListener('click', completarSala1);
 
                 window.addEventListener('DOMContentLoaded', iniciarSala1);
@@ -416,7 +485,7 @@
                 <div class="acertijo">
 
                     <p class="numero-acertijo">
-                        ACERTIJO @acertijo.Numero DE 4
+                        ACERTIJO @acertijo.Numero DE @totalPreguntasSala
                     </p>
 
                     <h2>

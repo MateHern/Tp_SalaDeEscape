@@ -1,38 +1,61 @@
 @{
     ViewData["Title"] = "Victoria";
+    string tiempoRestante = ViewBag.TiempoRestante ?? TempData["TiempoRestante"] ?? "00:00";
+    bool existeVideo = System.IO.File.Exists(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "video", "final.mp4"));
 }
 
-<div class="victoria">
+@if (existeVideo)
+{
+    <div id="video-final-wrapper" class="video-final-wrapper">
+        <video id="video-final"
+               class="video-final"
+               autoplay
+               muted
+               playsinline
+               src="~/video/final.mp4"
+               type="video/mp4">
+        </video>
+    </div>
+}
 
-    <div class="victoria-contenido">
+<div id="mensaje-final-wrapper" class="victoria-final @(existeVideo ? "oculto" : "")">
+    <div class="victoria-final-contenido">
 
         <p class="texto-pequeno">LO LOGRASTE</p>
 
         <h1>ESCAPASTE<br />DE LA BOMBONERA</h1>
 
-        <p>
-            Después de recorrer el estadio y resolver todos los acertijos,
-            finalmente encontraste la salida.
-        </p>
-
-        <p>
-            Las puertas se abren lentamente...
-        </p>
-
         <p class="mensaje-final">
-            Pero cuando salís, escuchás una última voz detrás tuyo.
-        </p>
-
-        <p>
-            "Esto no termina acá..."
+            LOGRASTE ESCAPAR, TE FALTARON @tiempoRestante
         </p>
 
         <a asp-controller="Home"
            asp-action="Index"
            class="boton">
-            VOLVER AL INICIO
+            VOLVER A JUGAR
         </a>
 
     </div>
-
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const video = document.getElementById('video-final');
+        const videoWrapper = document.getElementById('video-final-wrapper');
+        const mensajeWrapper = document.getElementById('mensaje-final-wrapper');
+
+        if (!video || !videoWrapper || !mensajeWrapper) {
+            return;
+        }
+
+        video.addEventListener('ended', function () {
+            videoWrapper.classList.add('oculto');
+            mensajeWrapper.classList.remove('oculto');
+        });
+
+        video.play().catch(() => {
+            videoWrapper.classList.add('oculto');
+            mensajeWrapper.classList.remove('oculto');
+        });
+    });
+</script>

@@ -5,6 +5,9 @@ namespace LaMejorSala.Controllers
 {
     public class HomeController : Controller
     {
+        private const int DuracionPartidaMs = 30 * 60 * 1000;
+        private const string TiempoInicioPartidaSessionKey = "TiempoInicioPartida";
+
         public IActionResult Index()
         {
             return View();
@@ -25,6 +28,70 @@ namespace LaMejorSala.Controllers
             return View();
         }
 
+        private long ObtenerTiempoInicioPartida()
+        {
+            string? tiempoInicioRaw = HttpContext.Session.GetString(TiempoInicioPartidaSessionKey);
+
+            if (long.TryParse(tiempoInicioRaw, out long tiempoInicio))
+            {
+                return tiempoInicio;
+            }
+
+            return 0;
+        }
+
+        private string FormatearTiempoRestante(long tiempoRestanteMs)
+        {
+            long totalSegundos = Math.Max(0, (long)Math.Ceiling(tiempoRestanteMs / 1000d));
+            long minutos = totalSegundos / 60;
+            long segundos = totalSegundos % 60;
+
+            return $"{minutos:D2}:{segundos:D2}";
+        }
+
+        private string ObtenerTiempoRestanteActual()
+        {
+            long tiempoInicio = ObtenerTiempoInicioPartida();
+
+            if (tiempoInicio <= 0)
+            {
+                return "30:00";
+            }
+
+            long ahora = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            long tiempoTranscurrido = Math.Max(0, ahora - tiempoInicio);
+            long tiempoRestante = Math.Max(0, DuracionPartidaMs - tiempoTranscurrido);
+
+            return FormatearTiempoRestante(tiempoRestante);
+        }
+
+        private IActionResult? ValidarTiempoPartida(int? partidaId)
+        {
+            if (partidaId == null)
+            {
+                return null;
+            }
+
+            long tiempoInicio = ObtenerTiempoInicioPartida();
+
+            if (tiempoInicio <= 0)
+            {
+                return null;
+            }
+
+            long ahora = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            long tiempoTranscurrido = ahora - tiempoInicio;
+
+            if (tiempoTranscurrido >= DuracionPartidaMs)
+            {
+                BD.FinalizarPartida(partidaId.Value, "agotada");
+                HttpContext.Session.Clear();
+                return RedirectToAction("TiempoAgotado");
+            }
+
+            return null;
+        }
+
         [HttpPost]
         public IActionResult Comenzar(string nombre)
         {
@@ -35,14 +102,13 @@ namespace LaMejorSala.Controllers
             }
 
             int idJugador = BD.CrearJugador(nombre);
-
             int idPartida = BD.CrearPartida(idJugador);
 
             HttpContext.Session.SetInt32("PartidaId", idPartida);
             HttpContext.Session.SetInt32("SalaActual", 1);
             HttpContext.Session.SetString("NombreParticipante", nombre);
             HttpContext.Session.SetString(
-                "TiempoInicioPartida",
+                TiempoInicioPartidaSessionKey,
                 DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
 
             return RedirectToAction("Sala");
@@ -65,19 +131,26 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Index");
             }
 
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return resultadoTiempo;
+            }
+
+            if (sala.Numero == 3)
+            {
+                BD.AsegurarAcertijosSala3();
+            }
+
             int ultimaSalaResuelta = BD.ObtenerUltimaSalaResuelta(partidaId.Value);
 
             if (sala.Numero > ultimaSalaResuelta + 1)
             {
                 HttpContext.Session.SetInt32("SalaActual", ultimaSalaResuelta + 1);
-
                 return RedirectToAction("Sala");
             }
 
-            Acertijo acertijo = BD.ObtenerAcertijoActual(
-                partidaId.Value,
-                sala.Id
-            );
+            Acertijo acertijo = BD.ObtenerAcertijoActual(partidaId.Value, sala.Id);
 
             int errores = BD.ObtenerErrores(partidaId.Value);
             string peligro;
@@ -94,7 +167,6 @@ namespace LaMejorSala.Controllers
                 }
 
                 int erroresSala = BD.ObtenerErrores(partidaId.Value);
-
                 string peligroSala;
                 string mensajePeligroSala;
 
@@ -179,15 +251,13 @@ namespace LaMejorSala.Controllers
                 if (sala.Numero == 5)
                 {
                     BD.FinalizarPartida(partidaId.Value, "completada");
+                    TempData["TiempoRestante"] = ObtenerTiempoRestanteActual();
+                    HttpContext.Session.Clear();
 
                     return RedirectToAction("Victoria");
                 }
 
-                HttpContext.Session.SetInt32(
-                    "SalaActual",
-                    sala.Numero + 1
-                );
-
+                HttpContext.Session.SetInt32("SalaActual", sala.Numero + 1);
                 return RedirectToAction("Sala");
             }
 
@@ -239,6 +309,12 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Index");
             }
 
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return resultadoTiempo;
+            }
+
             if (salaActual.Value != 2)
             {
                 return RedirectToAction("Sala");
@@ -267,10 +343,7 @@ namespace LaMejorSala.Controllers
                 puertaCorrecta = 2;
             }
 
-            Acertijo acertijo = BD.ObtenerAcertijoActual(
-                partidaId.Value,
-                2
-            );
+            Acertijo acertijo = BD.ObtenerAcertijoActual(partidaId.Value, 2);
 
             if (acertijo == null)
             {
@@ -290,51 +363,27 @@ namespace LaMejorSala.Controllers
             if (!esCorrecta)
             {
                 TempData["Error"] = "Elegiste la puerta incorrecta. Tenés que volver a empezar esta sala.";
-
-                HttpContext.Session.SetInt32(
-                    "SituacionSala2",
-                    1
-                );
-
+                HttpContext.Session.SetInt32("SituacionSala2", 1);
                 return RedirectToAction("Sala");
             }
 
             if (situacion == 1)
             {
-                HttpContext.Session.SetInt32(
-                    "SituacionSala2",
-                    2
-                );
-
+                HttpContext.Session.SetInt32("SituacionSala2", 2);
                 TempData["Correcto"] = "Correcto. Elegiste la puerta indicada.";
-
                 return RedirectToAction("Sala");
             }
 
             if (situacion == 2)
             {
-                HttpContext.Session.SetInt32(
-                    "SituacionSala2",
-                    3
-                );
-
+                HttpContext.Session.SetInt32("SituacionSala2", 3);
                 TempData["Correcto"] = "Correcto. Encontraste la segunda puerta.";
-
                 return RedirectToAction("Sala");
             }
 
-            BD.MarcarSalaResuelta(
-                partidaId.Value,
-                2
-            );
-
+            BD.MarcarSalaResuelta(partidaId.Value, 2);
             HttpContext.Session.Remove("SituacionSala2");
-
-            HttpContext.Session.SetInt32(
-                "SalaActual",
-                3
-            );
-
+            HttpContext.Session.SetInt32("SalaActual", 3);
             TempData["Correcto"] = "Lograste atravesar el túnel.";
 
             return RedirectToAction("Sala");
@@ -351,6 +400,12 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Index");
             }
 
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return resultadoTiempo;
+            }
+
             if (string.IsNullOrWhiteSpace(respuesta))
             {
                 TempData["Error"] = "Tenés que escribir una respuesta.";
@@ -358,7 +413,6 @@ namespace LaMejorSala.Controllers
             }
 
             Sala sala = BD.ObtenerSala(salaActual.Value);
-
             Acertijo acertijo = BD.ObtenerAcertijo(idAcertijo);
 
             if (sala == null || acertijo == null)
@@ -395,39 +449,27 @@ namespace LaMejorSala.Controllers
                 }
 
                 TempData["Error"] = "La respuesta es incorrecta. Fabra está cada vez más cerca.";
-
                 return RedirectToAction("Sala");
             }
 
             TempData["Correcto"] = "Respuesta correcta.";
 
-            int acertijosResueltos =
-                BD.CantidadAcertijosResueltos(
-                    partidaId.Value,
-                    sala.Id
-                );
+            int acertijosResueltos = BD.CantidadAcertijosResueltos(partidaId.Value, sala.Id);
+            int totalNecesario = sala.Numero == 3 ? 7 : 4;
 
-            if (acertijosResueltos >= 4)
+            if (acertijosResueltos >= totalNecesario)
             {
-                BD.MarcarSalaResuelta(
-                    partidaId.Value,
-                    sala.Id
-                );
+                BD.MarcarSalaResuelta(partidaId.Value, sala.Id);
 
                 if (sala.Numero == 5)
                 {
-                    BD.FinalizarPartida(
-                        partidaId.Value,
-                        "completada"
-                    );
-
+                    BD.FinalizarPartida(partidaId.Value, "completada");
+                    TempData["TiempoRestante"] = ObtenerTiempoRestanteActual();
+                    HttpContext.Session.Clear();
                     return RedirectToAction("Victoria");
                 }
 
-                HttpContext.Session.SetInt32(
-                    "SalaActual",
-                    sala.Numero + 1
-                );
+                HttpContext.Session.SetInt32("SalaActual", sala.Numero + 1);
             }
 
             return RedirectToAction("Sala");
@@ -442,6 +484,12 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Index");
             }
 
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return resultadoTiempo;
+            }
+
             Acertijo acertijo = BD.ObtenerAcertijo(idAcertijo);
 
             if (acertijo == null)
@@ -449,11 +497,7 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Sala");
             }
 
-            BD.GuardarPista(
-                partidaId.Value,
-                idAcertijo
-            );
-
+            BD.GuardarPista(partidaId.Value, idAcertijo);
             TempData["Pista"] = acertijo.Pista;
 
             return RedirectToAction("Sala");
@@ -462,26 +506,31 @@ namespace LaMejorSala.Controllers
         public IActionResult FabraAlcanzo()
         {
             HttpContext.Session.Clear();
-
             return View();
         }
 
         public IActionResult Perdiste()
         {
             HttpContext.Session.Clear();
-
             return View();
         }
 
         public IActionResult VolverAIntentar()
         {
             HttpContext.Session.Clear();
-
             return RedirectToAction("Identificacion");
         }
 
         public IActionResult Victoria()
         {
+            ViewBag.TiempoRestante = TempData["TiempoRestante"] ?? "00:00";
+            HttpContext.Session.Clear();
+            return View();
+        }
+
+        public IActionResult TiempoAgotado()
+        {
+            HttpContext.Session.Clear();
             return View();
         }
 
@@ -494,6 +543,12 @@ namespace LaMejorSala.Controllers
             if (partidaId == null)
             {
                 return Json(new { ok = false });
+            }
+
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return Json(new { ok = true, peligroMaximo = true, redirect = Url.Action("TiempoAgotado") });
             }
 
             Acertijo acertijo = BD.ObtenerPrimerAcertijoDeSala(1);
@@ -539,6 +594,12 @@ namespace LaMejorSala.Controllers
             if (partidaId == null)
             {
                 return Json(new { ok = false });
+            }
+
+            IActionResult? resultadoTiempo = ValidarTiempoPartida(partidaId);
+            if (resultadoTiempo != null)
+            {
+                return Json(new { ok = true, redirect = Url.Action("TiempoAgotado") });
             }
 
             BD.MarcarSalaResuelta(partidaId.Value, 1);

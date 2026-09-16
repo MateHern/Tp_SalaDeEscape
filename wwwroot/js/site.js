@@ -40,7 +40,7 @@ function updateCountdownTimer() {
 
         if (!body.dataset.timerExpired) {
             body.dataset.timerExpired = 'true';
-            window.location.href = '/Home/Perdiste';
+            window.location.href = '/Home/TiempoAgotado';
         }
     }
 }
