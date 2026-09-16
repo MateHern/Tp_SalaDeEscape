@@ -1208,8 +1208,8 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.Data.SqlClient >= 7.0.2",
-      "dapper >= 2.1.79"
+      "Dapper >= 2.1.79",
+      "Microsoft.Data.SqlClient >= 7.0.2"
     ]
   },
   "packageFolders": {
@@ -1262,13 +1262,13 @@
       "net9.0": {
         "targetAlias": "net9.0",
         "dependencies": {
+          "Dapper": {
+            "target": "Package",
+            "version": "[2.1.79, )"
+          },
           "Microsoft.Data.SqlClient": {
             "target": "Package",
             "version": "[7.0.2, )"
-          },
-          "dapper": {
-            "target": "Package",
-            "version": "[2.1.79, )"
           }
         },
         "imports": [
@@ -1290,7 +1290,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.316/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

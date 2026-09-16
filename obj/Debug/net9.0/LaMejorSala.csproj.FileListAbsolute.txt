@@ -139,4 +139,4 @@ Z:\prog\LaMejorSala\obj\Debug\net9.0\LaMejorSala.genruntimeconfig.cache
 Z:\prog\LaMejorSala\obj\Debug\net9.0\ref\LaMejorSala.dll
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\07i36plomg-tccfe15yzf.gz
 Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\rhs7b0zk0d-j7ly386xjr.gz
-Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-ubxsmzgeei.gz
+Z:\prog\LaMejorSala\obj\Debug\net9.0\compressed\lt16ml0pzl-wpr5lqew9v.gz

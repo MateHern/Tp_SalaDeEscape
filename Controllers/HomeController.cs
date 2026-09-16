@@ -78,6 +78,11 @@ namespace LaMejorSala.Controllers
                 partidaId.Value,
                 sala.Id
             );
+
+            int errores = BD.ObtenerErrores(partidaId.Value);
+            string peligro;
+            string mensajePeligro;
+
             if (sala.Numero == 2)
             {
                 int? situacion = HttpContext.Session.GetInt32("SituacionSala2");
@@ -131,10 +136,7 @@ namespace LaMejorSala.Controllers
 
             if (sala.Numero == 1)
             {
-                int errores = BD.ObtenerErrores(partidaId.Value);
-
-                string peligro;
-                string mensajePeligro;
+                errores = BD.ObtenerErrores(partidaId.Value);
 
                 if (errores >= 4)
                 {
@@ -189,10 +191,7 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Sala");
             }
 
-            int errores = BD.ObtenerErrores(partidaId.Value);
-
-            string peligro;
-            string mensajePeligro;
+            errores = BD.ObtenerErrores(partidaId.Value);
 
             if (errores >= 4)
             {
@@ -228,118 +227,118 @@ namespace LaMejorSala.Controllers
 
             return View();
         }
+
         [HttpPost]
-[HttpPost]
-public IActionResult ElegirPuerta(int puerta)
-{
-    int? partidaId = HttpContext.Session.GetInt32("PartidaId");
-    int? salaActual = HttpContext.Session.GetInt32("SalaActual");
+        public IActionResult ElegirPuerta(int puerta)
+        {
+            int? partidaId = HttpContext.Session.GetInt32("PartidaId");
+            int? salaActual = HttpContext.Session.GetInt32("SalaActual");
 
-    if (partidaId == null || salaActual == null)
-    {
-        return RedirectToAction("Index");
-    }
+            if (partidaId == null || salaActual == null)
+            {
+                return RedirectToAction("Index");
+            }
 
-    if (salaActual.Value != 2)
-    {
-        return RedirectToAction("Sala");
-    }
+            if (salaActual.Value != 2)
+            {
+                return RedirectToAction("Sala");
+            }
 
-    int? situacion = HttpContext.Session.GetInt32("SituacionSala2");
+            int? situacion = HttpContext.Session.GetInt32("SituacionSala2");
 
-    if (situacion == null)
-    {
-        situacion = 1;
-        HttpContext.Session.SetInt32("SituacionSala2", 1);
-    }
+            if (situacion == null)
+            {
+                situacion = 1;
+                HttpContext.Session.SetInt32("SituacionSala2", 1);
+            }
 
-    int puertaCorrecta;
+            int puertaCorrecta;
 
-    if (situacion == 1)
-    {
-        puertaCorrecta = 2;
-    }
-    else if (situacion == 2)
-    {
-        puertaCorrecta = 1;
-    }
-    else
-    {
-        puertaCorrecta = 2;
-    }
+            if (situacion == 1)
+            {
+                puertaCorrecta = 2;
+            }
+            else if (situacion == 2)
+            {
+                puertaCorrecta = 1;
+            }
+            else
+            {
+                puertaCorrecta = 2;
+            }
 
-    Acertijo acertijo = BD.ObtenerAcertijoActual(
-        partidaId.Value,
-        2
-    );
+            Acertijo acertijo = BD.ObtenerAcertijoActual(
+                partidaId.Value,
+                2
+            );
 
-    if (acertijo == null)
-    {
-        return RedirectToAction("Sala");
-    }
+            if (acertijo == null)
+            {
+                return RedirectToAction("Sala");
+            }
 
-    bool esCorrecta = puerta == puertaCorrecta;
+            bool esCorrecta = puerta == puertaCorrecta;
 
-    BD.GuardarRespuesta(
-        partidaId.Value,
-        2,
-        acertijo.Id,
-        "Puerta " + puerta,
-        esCorrecta
-    );
+            BD.GuardarRespuesta(
+                partidaId.Value,
+                2,
+                acertijo.Id,
+                "Puerta " + puerta,
+                esCorrecta
+            );
 
-    if (!esCorrecta)
-    {
-        TempData["Error"] = "Elegiste la puerta incorrecta. Tenés que volver a empezar esta sala.";
+            if (!esCorrecta)
+            {
+                TempData["Error"] = "Elegiste la puerta incorrecta. Tenés que volver a empezar esta sala.";
 
-        HttpContext.Session.SetInt32(
-            "SituacionSala2",
-            1
-        );
+                HttpContext.Session.SetInt32(
+                    "SituacionSala2",
+                    1
+                );
 
-        return RedirectToAction("Sala");
-    }
+                return RedirectToAction("Sala");
+            }
 
-    if (situacion == 1)
-    {
-        HttpContext.Session.SetInt32(
-            "SituacionSala2",
-            2
-        );
+            if (situacion == 1)
+            {
+                HttpContext.Session.SetInt32(
+                    "SituacionSala2",
+                    2
+                );
 
-        TempData["Correcto"] = "Correcto. Elegiste la puerta indicada.";
+                TempData["Correcto"] = "Correcto. Elegiste la puerta indicada.";
 
-        return RedirectToAction("Sala");
-    }
+                return RedirectToAction("Sala");
+            }
 
-    if (situacion == 2)
-    {
-        HttpContext.Session.SetInt32(
-            "SituacionSala2",
-            3
-        );
+            if (situacion == 2)
+            {
+                HttpContext.Session.SetInt32(
+                    "SituacionSala2",
+                    3
+                );
 
-        TempData["Correcto"] = "Correcto. Encontraste la segunda puerta.";
+                TempData["Correcto"] = "Correcto. Encontraste la segunda puerta.";
 
-        return RedirectToAction("Sala");
-    }
+                return RedirectToAction("Sala");
+            }
 
-    BD.MarcarSalaResuelta(
-        partidaId.Value,
-        2
-    );
+            BD.MarcarSalaResuelta(
+                partidaId.Value,
+                2
+            );
 
-    HttpContext.Session.Remove("SituacionSala2");
+            HttpContext.Session.Remove("SituacionSala2");
 
-    HttpContext.Session.SetInt32(
-        "SalaActual",
-        3
-    );
+            HttpContext.Session.SetInt32(
+                "SalaActual",
+                3
+            );
 
-    TempData["Correcto"] = "Lograste atravesar el túnel.";
+            TempData["Correcto"] = "Lograste atravesar el túnel.";
 
-    return RedirectToAction("Sala");
-}
+            return RedirectToAction("Sala");
+        }
 
         [HttpPost]
         public IActionResult Responder(int idAcertijo, string respuesta)
