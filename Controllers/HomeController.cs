@@ -328,34 +328,42 @@ namespace LaMejorSala.Controllers
                 HttpContext.Session.SetInt32("SituacionSala2", 1);
             }
 
+            int situacionInt = situacion.Value;
+
             int puertaCorrecta;
 
-            if (situacion == 1)
+            switch (situacionInt)
             {
-                puertaCorrecta = 2;
-            }
-            else if (situacion == 2)
-            {
-                puertaCorrecta = 1;
-            }
-            else
-            {
-                puertaCorrecta = 2;
+                case 1:
+                    puertaCorrecta = 2;
+                    break;
+                case 2:
+                    puertaCorrecta = 1;
+                    break;
+                case 3:
+                    puertaCorrecta = 2;
+                    break;
+                case 4:
+                    // En la puerta 4 la opción 2 es la correcta
+                    puertaCorrecta = 2;
+                    break;
+                case 5:
+                    // En la puerta 5 la opción 2 es la correcta (según la última indicación)
+                    puertaCorrecta = 2;
+                    break;
+                default:
+                    puertaCorrecta = 2;
+                    break;
             }
 
             Acertijo acertijo = BD.ObtenerAcertijoActual(partidaId.Value, 2);
-
-            if (acertijo == null)
-            {
-                return RedirectToAction("Sala");
-            }
 
             bool esCorrecta = puerta == puertaCorrecta;
 
             BD.GuardarRespuesta(
                 partidaId.Value,
                 2,
-                acertijo.Id,
+                acertijo?.Id,
                 "Puerta " + puerta,
                 esCorrecta
             );
@@ -367,20 +375,28 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Sala");
             }
 
-            if (situacion == 1)
+            // Si la respuesta es correcta, avanzamos de situación hasta la 5
+            if (situacionInt >= 1 && situacionInt < 5)
             {
-                HttpContext.Session.SetInt32("SituacionSala2", 2);
-                TempData["Correcto"] = "Correcto. Elegiste la puerta indicada.";
+                HttpContext.Session.SetInt32("SituacionSala2", situacionInt + 1);
+
+                if (situacionInt == 1)
+                {
+                    TempData["Correcto"] = "Correcto. Elegiste la puerta indicada.";
+                }
+                else if (situacionInt == 2)
+                {
+                    TempData["Correcto"] = "Correcto. Encontraste la segunda puerta.";
+                }
+                else
+                {
+                    TempData["Correcto"] = "Correcto. Encontraste la siguiente puerta.";
+                }
+
                 return RedirectToAction("Sala");
             }
 
-            if (situacion == 2)
-            {
-                HttpContext.Session.SetInt32("SituacionSala2", 3);
-                TempData["Correcto"] = "Correcto. Encontraste la segunda puerta.";
-                return RedirectToAction("Sala");
-            }
-
+            // situacion >= 5 -> marcar sala resuelta
             BD.MarcarSalaResuelta(partidaId.Value, 2);
             HttpContext.Session.Remove("SituacionSala2");
             HttpContext.Session.SetInt32("SalaActual", 3);

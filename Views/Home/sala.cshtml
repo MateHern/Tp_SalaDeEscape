@@ -323,7 +323,7 @@
 
                 <p>
                     Mirá cuidadosamente la imagen.
-                    Hay una pista escondida que te indica qué puerta elegir.
+                    Confia en tu instinto, no te confies de nadie..
                 </p>
 
                 @if (situacion == 1)
@@ -341,6 +341,16 @@
                     <img src="~/img/puerta3.jfif" class="imagen-puerta" alt="Túnel oscuro">
                 }
 
+                @if (situacion == 4)
+                {
+                    <img src="~/img/puerta4.jfif" class="imagen-puerta" alt="Túnel oscuro">
+                }
+
+                @if (situacion == 5)
+                {
+                    <img src="~/img/puerta5.jfif" class="imagen-puerta" alt="Túnel oscuro">
+                }
+                
                 <div class="botones-puerta">
 
                     <form method="post" action="/Home/ElegirPuerta">
@@ -352,6 +362,8 @@
                         <input type="hidden" name="puerta" value="2">
                         <button type="submit">PUERTA 2</button>
                     </form>
+
+                    <!-- Solo dos opciones por imagen, PUERTA 1 y PUERTA 2 -->
 
                 </div>
 

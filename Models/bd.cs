@@ -92,7 +92,7 @@ public class BD
     public static void GuardarRespuesta(
         int idPartida,
         int idSala,
-        int idAcertijo,
+        int? idAcertijo,
         string respuesta,
         bool esCorrecta)
     {
