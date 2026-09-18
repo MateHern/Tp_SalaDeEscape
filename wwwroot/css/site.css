@@ -38,21 +38,33 @@ a {
     width: 75%;
     max-width: 900px;
     padding: 50px;
-    background-color: rgba(0, 0, 0, 0.75);
-    border: 2px solid #e5b800;
+    background-color: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(229,184,0,0.6);
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(229,184,0,0.06) inset;
 }
 
 .texto-pequeno {
-    color: #e5b800;
-    font-size: 15px;
-    letter-spacing: 4px;
-    margin-bottom: 20px;
+    color: #ffd86b;
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+    opacity: 0.95;
 }
 
 .inicio h1 {
-    font-size: 65px;
+    font-size: 72px;
     line-height: 0.95;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    /* Azul y oro de Boca en degradado neón */
+    background: linear-gradient(90deg, #06306b 0%, #1e90ff 40%, #e5b800 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:
+        0 0 8px rgba(229,184,0,0.95),
+        0 0 24px rgba(30,144,255,0.12),
+        0 8px 28px rgba(0,0,0,0.6);
 }
 
 .subtitulo {
@@ -489,6 +501,10 @@ input[type="text"]:focus {
 .victoria h1 {
     font-size: 60px;
     margin-bottom: 25px;
+    background: linear-gradient(90deg, #06306b 0%, #1e90ff 40%, #e5b800 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(229,184,0,0.9);
 }
 
 .victoria p {

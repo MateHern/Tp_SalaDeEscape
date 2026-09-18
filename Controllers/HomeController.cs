@@ -250,6 +250,8 @@ namespace LaMejorSala.Controllers
 
                 if (sala.Numero == 5)
                 {
+                    // Guardar el nombre del participante antes de limpiar la sesión
+                    TempData["NombreParticipante"] = HttpContext.Session.GetString("NombreParticipante");
                     BD.FinalizarPartida(partidaId.Value, "completada");
                     TempData["TiempoRestante"] = ObtenerTiempoRestanteActual();
                     HttpContext.Session.Clear();
@@ -360,6 +362,16 @@ namespace LaMejorSala.Controllers
 
             bool esCorrecta = puerta == puertaCorrecta;
 
+            if (acertijo == null && situacionInt <= 4)
+            {
+                acertijo = BD.ObtenerAcertijoPorSalaYNumero(2, situacionInt);
+            }
+
+            if (acertijo == null && situacionInt == 5)
+            {
+                acertijo = BD.ObtenerAcertijoPorSalaYNumero(2, 4);
+            }
+
             BD.GuardarRespuesta(
                 partidaId.Value,
                 2,
@@ -405,6 +417,35 @@ namespace LaMejorSala.Controllers
             return RedirectToAction("Sala");
         }
 
+        private static string NormalizarRespuesta(string? valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor))
+            {
+                return string.Empty;
+            }
+
+            // Trim, collapse spaces and lowercase
+            string limpio = string.Join(
+                " ",
+                valor.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            ).ToLowerInvariant();
+
+            // Remover tildes/diacríticos para que las respuestas no dependan de acentos
+            string normalized = limpio.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+
+            foreach (var c in normalized)
+            {
+                var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(c);
+                }
+            }
+
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
+        }
+
         [HttpPost]
         public IActionResult Responder(int idAcertijo, string respuesta)
         {
@@ -436,15 +477,29 @@ namespace LaMejorSala.Controllers
                 return RedirectToAction("Sala");
             }
 
-            string respuestaJugador = respuesta.Trim().ToLower();
-            string respuestaCorrecta = acertijo.RespuestaCorrecta.Trim().ToLower();
+            string respuestaJugador = NormalizarRespuesta(respuesta);
+            string respuestaCorrectaRaw = acertijo.RespuestaCorrecta ?? string.Empty;
+            string respuestaCorrecta = NormalizarRespuesta(respuestaCorrectaRaw);
 
-            if (sala.Numero == 4 && acertijo.Numero == 4)
+            // Soportar múltiples respuestas correctas separadas por '|' en la DB
+            bool esCorrecta = false;
+
+            if (respuestaCorrecta.Contains("|"))
             {
-                respuestaCorrecta = "739590";
+                var opciones = respuestaCorrecta.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var opt in opciones)
+                {
+                    if (respuestaJugador == opt.Trim())
+                    {
+                        esCorrecta = true;
+                        break;
+                    }
+                }
             }
-
-            bool esCorrecta = respuestaJugador == respuestaCorrecta;
+            else
+            {
+                esCorrecta = respuestaJugador == respuestaCorrecta;
+            }
 
             BD.GuardarRespuesta(
                 partidaId.Value,
@@ -479,6 +534,8 @@ namespace LaMejorSala.Controllers
 
                 if (sala.Numero == 5)
                 {
+                    // Guardar el nombre para mostrarlo en la pantalla de victoria
+                    TempData["NombreParticipante"] = HttpContext.Session.GetString("NombreParticipante");
                     BD.FinalizarPartida(partidaId.Value, "completada");
                     TempData["TiempoRestante"] = ObtenerTiempoRestanteActual();
                     HttpContext.Session.Clear();

@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Victoria";
     string tiempoRestante = ViewBag.TiempoRestante ?? TempData["TiempoRestante"] ?? "00:00";
+    string nombre = TempData["NombreParticipante"] as string ?? "Jugador";
     bool existeVideo = System.IO.File.Exists(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "video", "final.mp4"));
 }
 
@@ -23,10 +24,10 @@
 
         <p class="texto-pequeno">LO LOGRASTE</p>
 
-        <h1>ESCAPASTE<br />DE LA BOMBONERA</h1>
+        <h1>Felicitacion @nombre</h1>
 
         <p class="mensaje-final">
-            LOGRASTE ESCAPAR, TE FALTARON @tiempoRestante
+            Felicitacion @nombre lograste escapar de la sala.
         </p>
 
         <a asp-controller="Home"

@@ -7,6 +7,25 @@ public class BD
     private static string connectionString =
     "Server=localhost;Database=EscapeBombonera;Trusted_Connection=True;TrustServerCertificate=True;";
 
+    public static Acertijo ObtenerAcertijoPorSalaYNumero(int idSala, int numero)
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            string sql = @"
+                SELECT TOP 1 *
+                FROM Acertijo
+                WHERE IdSala = @IdSala
+                AND Numero = @Numero
+            ";
+
+            return connection.QueryFirstOrDefault<Acertijo>(sql, new
+            {
+                IdSala = idSala,
+                Numero = numero
+            });
+        }
+    }
+
     public static int CrearJugador(string nombre)
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
@@ -96,6 +115,11 @@ public class BD
         string respuesta,
         bool esCorrecta)
     {
+        if (!idAcertijo.HasValue)
+        {
+            return;
+        }
+
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
             string sql = @"
@@ -357,51 +381,51 @@ public class BD
                 new
                 {
                     Numero = 1,
-                    Pregunta = "¿Qué club uruguayo fue el rival de Boca Juniors en su primer partido internacional de la historia en el año 1907?",
-                    Respuesta = "Universal Football Club",
-                    Pista = "Su nombre suena muy 'espacial' o del 'cosmos', y el partido terminó con derrota xeneize por 2 a 1 en Buenos Aires."
+                    Pregunta = "En una bandera encontrás las letras B O C A. Debajo hay cuatro números: 2 - 15 - 3 - 1. Pero esta vez tenés que multiplicar el valor de la primera letra por el de la última y sumar los valores de las dos letras del medio. ¿Cuál es el resultado?",
+                    Respuesta = "20",
+                    Pista = "Usá el valor de cada letra del abecedario. Primero multiplicá y después sumá."
                 },
                 new
                 {
                     Numero = 2,
+                    Pregunta = "Escuchás a la barra cantar y encontrás una pared con esta secuencia: 1 - 4 - 9 - 16 - 25 - ?. ¿Qué número falta?",
+                    Respuesta = "36",
+                    Pista = "Cada número es el resultado de multiplicar un número por sí mismo."
+                },
+                new
+                {
+                    Numero = 3,
+                    Pregunta = "Encontrás cinco escalones numerados. El primero tiene 3, el segundo 6, el tercero 12 y el cuarto 24. En el quinto alguien escribió solamente un signo de pregunta. ¿Qué número debería aparecer?",
+                    Respuesta = "48",
+                    Pista = "Cada escalón duplica el número anterior."
+                },
+                new
+                {
+                    Numero = 4,
+                    Pregunta = "Una puerta tiene tres candados. Cada uno tiene un número: 4, 7 y 12. Una nota dice: El primer número aumenta 3 y el segundo aumenta 5. Seguí la misma lógica. ¿Cuál sería el siguiente número?",
+                    Respuesta = "19",
+                    Pista = "Las diferencias entre los números también esconden una secuencia."
+                },
+                new
+                {
+                    Numero = 5,
+                    Pregunta = "¿Qué club uruguayo fue el rival de Boca Juniors en su primer partido internacional de la historia en el año 1907?",
+                    Respuesta = "Universal De Montevideo",
+                    Pista = "Su nombre suena muy 'espacial' o del 'cosmos', y el partido terminó con derrota xeneize por 2 a 1 en Buenos Aires."
+                },
+                new
+                {
+                    Numero = 6,
                     Pregunta = "¿Quién es la persona con más títulos ganados en la historia del club contando su etapa como jugador y como director técnico?",
                     Respuesta = "Sebastián Battaglia",
                     Pista = "Es un mediocampista central histórico de la época dorada de Carlos Bianchi; de hecho, metió el penal decisivo en Japón contra el Milan en 2003."
                 },
                 new
                 {
-                    Numero = 3,
+                    Numero = 7,
                     Pregunta = "¿Cuál fue el único director técnico brasileño que dirigió al club en la era del profesionalismo?",
                     Respuesta = "Dino Sani",
                     Pista = "Dirigió en 1984, se llamaba Dino y su apellido empieza con S."
-                },
-                new
-                {
-                    Numero = 4,
-                    Pregunta = "¿A qué equipo mexicano le ganó Boca la final de la Copa Libertadores 2001 para convertirse en bicampeón de América?",
-                    Respuesta = "Cruz Azul",
-                    Pista = "Es un equipo que viste de azul y blanco, y la final de vuelta se definió por penales en La Bombonera."
-                },
-                new
-                {
-                    Numero = 5,
-                    Pregunta = "¿Qué histórico delantero xeneize de la década de 1930 tenía el curioso apodo de 'El Expreso de Guayaquil'?",
-                    Respuesta = "Francisco Lanz",
-                    Pista = "Nacido en Ecuador, hizo una dupla letal con Roberto Cherro y su apellido es Francisco Lanz..."
-                },
-                new
-                {
-                    Numero = 6,
-                    Pregunta = "¿Quién fue el arquero titular de Boca en la histórica final de la Copa Intercontinental del año 2000 contra el Real Madrid?",
-                    Respuesta = "Óscar Córdoba",
-                    Pista = "No fue el Pato Abbondanzieri; era un arquero colombiano muy famoso por sus reflejos y por sus pantalones largos."
-                },
-                new
-                {
-                    Numero = 7,
-                    Pregunta = "¿En qué año se utilizó por primera vez la camiseta azul con la franja amarilla horizontal en el medio?",
-                    Respuesta = "1913",
-                    Pista = "Fue a principios de la década de 1910; el club adoptó los colores definitivos inspirados en la bandera de un barco sueco."
                 }
             };
 
